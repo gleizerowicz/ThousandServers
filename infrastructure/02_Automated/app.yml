@@ -7,6 +7,10 @@ Parameters:
     Type: String
     Description: The git repo where the application and environment artifacts are stored
 
+  InstanceProfileArn:
+    Type: String
+    Description: Instance Profile ARN if it already exists (if this is a new region)
+
   HostedZoneName:
     Default: leizerodemo.net.
     Type: String
@@ -27,6 +31,8 @@ Parameters:
 
 Conditions: 
   DeployDnsRecordSet: !Equals [ !Ref UseRoute53, true ]
+
+  CreateIamResources: !Equals [ !Ref InstanceProfileArn, '' ]
   
 Mappings:
   RegionMap:
@@ -277,46 +283,15 @@ Resources:
       - Key: Name
         Value: appElb
       SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: '80'
-        ToPort: '80'
-        CidrIp: 0.0.0.0/0
-      - IpProtocol: tcp
-        FromPort: '443'
-        ToPort: '443'
+      - IpProtocol: '-1'
+        FromPort: '-1'
+        ToPort: '-1'
         CidrIp: 0.0.0.0/0
       SecurityGroupEgress:
       - IpProtocol: '-1'
         FromPort: '-1'
         ToPort: '-1'
         CidrIp: 0.0.0.0/0
-
-  elbEgressHttp:
-    Type: AWS::EC2::SecurityGroupEgress
-    Properties:
-      GroupId: !Ref 'elbSecurityGroup'
-      IpProtocol: tcp
-      FromPort: '80'
-      ToPort: '80'
-      DestinationSecurityGroupId: !Ref 'appSecurityGroup'
-
-  elbEgressHttps:
-    Type: AWS::EC2::SecurityGroupEgress
-    Properties:
-      GroupId: !Ref 'elbSecurityGroup'
-      IpProtocol: tcp
-      FromPort: '443'
-      ToPort: '443'
-      DestinationSecurityGroupId: !Ref 'appSecurityGroup'
-
-  elbEgressSsh:
-    Type: AWS::EC2::SecurityGroupEgress
-    Properties:
-      GroupId: !Ref 'elbSecurityGroup'
-      IpProtocol: tcp
-      FromPort: '22'
-      ToPort: '22'
-      DestinationSecurityGroupId: !Ref 'appSecurityGroup'
 
   natSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -326,38 +301,16 @@ Resources:
       Tags:
       - Key: Name
         Value: appNat
+      SecurityGroupIngress:
+      - IpProtocol: '-1'
+        FromPort: '-1'
+        ToPort: '-1'
+        CidrIp: 0.0.0.0/0
       SecurityGroupEgress:
       - IpProtocol: '-1'
         FromPort: '-1'
         ToPort: '-1'
         CidrIp: 0.0.0.0/0
-
-  natIngressAllApp:
-    Type: AWS::EC2::SecurityGroupIngress
-    Properties:
-      GroupId: !Ref 'natSecurityGroup'
-      IpProtocol: '-1'
-      FromPort: '-1'
-      ToPort: '-1'
-      SourceSecurityGroupId: !Ref 'appSecurityGroup'
-
-  natIngressAllElb:
-    Type: AWS::EC2::SecurityGroupIngress
-    Properties:
-      GroupId: !Ref 'natSecurityGroup'
-      IpProtocol: '-1'
-      FromPort: '-1'
-      ToPort: '-1'
-      SourceSecurityGroupId: !Ref 'elbSecurityGroup'
-
-  natEgressAllApp:
-    Type: AWS::EC2::SecurityGroupEgress
-    Properties:
-      GroupId: !Ref 'natSecurityGroup'
-      IpProtocol: '-1'
-      FromPort: '-1'
-      ToPort: '-1'
-      DestinationSecurityGroupId: !Ref 'appSecurityGroup'
 
   appSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -378,26 +331,9 @@ Resources:
         ToPort: '-1'
         CidrIp: 0.0.0.0/0
 
-  appEgressAllNat:
-    Type: AWS::EC2::SecurityGroupEgress
-    Properties:
-      GroupId: !Ref 'appSecurityGroup'
-      IpProtocol: '-1'
-      FromPort: '-1'
-      ToPort: '-1'
-      DestinationSecurityGroupId: !Ref 'natSecurityGroup'
-
-  appEgressAllElb:
-    Type: AWS::EC2::SecurityGroupEgress
-    Properties:
-      GroupId: !Ref 'appSecurityGroup'
-      IpProtocol: '-1'
-      FromPort: '-1'
-      ToPort: '-1'
-      DestinationSecurityGroupId: !Ref 'elbSecurityGroup'
-
   appRole:
     Type: AWS::IAM::Role
+    Condition: CreateIamResources
     Properties:
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
@@ -414,6 +350,7 @@ Resources:
 
   appInstanceProfile:
     Type: AWS::IAM::InstanceProfile
+    Condition: CreateIamResources
     Properties:
       Path: /
       Roles:
@@ -421,6 +358,7 @@ Resources:
 
   appManagedPolicy:
     Type: AWS::IAM::ManagedPolicy
+    Condition: CreateIamResources
     Properties:
       Description: app
       PolicyDocument:
@@ -437,8 +375,8 @@ Resources:
       - !Ref 'privateSubnet0'
       - !Ref 'privateSubnet1'
       LaunchConfigurationName: !Ref 'launchConfiguration'
-      MinSize: '1'
-      MaxSize: '1'
+      MinSize: '4'
+      MaxSize: '4'
       LoadBalancerNames:
       - !Ref 'elasticLoadBalancer'
       Tags:
@@ -491,7 +429,7 @@ Resources:
   launchConfiguration:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
-      IamInstanceProfile: !Ref 'appInstanceProfile'
+      IamInstanceProfile: !If [ CreateIamResources, !Ref 'appInstanceProfile', !Ref 'InstanceProfileArn' ]
       ImageId: !FindInMap [RegionMap, !Ref 'AWS::Region', app]
       InstanceType: t2.micro
       KeyName: app
