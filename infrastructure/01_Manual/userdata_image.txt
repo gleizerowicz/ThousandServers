@@ -1,0 +1,7 @@
+#!/bin/bash
+
+sudo yum -y update
+sudo yum -y install libunwind libicu git
+curl -sSL -o dotnet.tar.gz https://go.microsoft.com/fwlink/?LinkID=848826
+sudo mkdir -p /opt/dotnet && sudo tar zxf dotnet.tar.gz -C /opt/dotnet
+sudo ln -s /opt/dotnet/dotnet /usr/bin

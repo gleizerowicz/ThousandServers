@@ -1,0 +1,518 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: app
+
+Parameters:
+  AppGitRepo:
+    Default: https://github.com/gleizerowicz/Infrax-as-Code-1000-webservers-in-40-minutes.git
+    Type: String
+    Description: The git repo where the application and environment artifacts are stored
+
+  HostedZoneName:
+    Default: leizerodemo.net.
+    Type: String
+    Description: The hosted zone name for Route 53
+
+  UseRoute53:
+    Default: true
+    Type: String
+    Description: Used to decide whether to deploy a DNS Record Set, set to false if Route 53 is not set up
+    AllowedValues:
+    - true
+    - false
+
+  AppDnsName:
+    Default: app
+    Type: String
+    Description: DNS name of the app server (will be prepended to the Hosted Zone Name during deployment)
+
+Conditions: 
+  DeployDnsRecordSet: !Equals [ !Ref UseRoute53, true ]
+  
+Mappings:
+  RegionMap:
+    us-east-1:
+      app: ami-fce3c696
+      nat: ami-8d8976e0
+      natType: t2.nano
+
+    us-west-1:
+      app: ami-06116566
+      nat: ami-407f0520
+      natType: t2.nano
+
+    us-west-2:
+      app: ami-9abea4fb
+      nat: ami-cc01f9ac
+      natType: t2.nano
+
+    eu-west-1:
+      app: ami-f95ef58a
+      nat: ami-89ee7cfa
+      natType: t2.nano
+
+    eu-central-1:
+      app: ami-87564feb
+      nat: ami-9bf618f4
+      natType: t2.nano
+
+    ap-northeast-1:
+      app: ami-a21529cc
+      nat: ami-2555ba44
+      natType: t2.nano
+
+    ap-northeast-2:
+      app: ami-09dc1267
+      nat: ami-68e92206
+      natType: t2.nano
+
+    ap-southeast-1:
+      app: ami-25c00c46
+      nat: ami-b6c111d5
+      natType: t2.nano
+
+    ap-southeast-2:
+      app: ami-6c14310f
+      nat: ami-1cd6f87f
+      natType: t2.micro
+
+    sa-east-1:
+      app: ami-0fb83963
+      nat: ami-e257dc8e
+      natType: t2.nano
+
+    ap-south-1:
+      app: ami-ac5238c3
+      nat: ami-d3b6dcbc
+      natType: t2.nano
+
+    us-east-2:
+      app: ami-0becb76e
+      nat: ami-07fdd962
+      natType: t2.nano
+
+    eu-west-2:
+      app: ami-c7c7cda3
+      nat: ami-141d0970
+      natType: t2.nano
+
+    ca-central-1:
+      app: ami-2e51e34a
+      nat: ami-2103be45
+      natType: t2.nano
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      Tags:
+      - Key: Name
+        Value: app
+
+  networkAcl:
+    Type: AWS::EC2::NetworkAcl
+    Properties:
+      VpcId: !Ref 'VPC'
+
+  networkAclEntryIngress:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: '0.0.0.0/0'
+      Protocol: '-1'
+      RuleAction: 'allow'
+      RuleNumber: '100'
+      NetworkAclId: !Ref 'networkAcl'
+
+  networkAclEntryEgress:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: '0.0.0.0/0'
+      Egress: 'true'
+      Protocol: '-1'
+      RuleAction: 'allow'
+      RuleNumber: '100'
+      NetworkAclId: !Ref 'networkAcl'
+
+  publicSubnet0Acl:
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId: !Ref 'networkAcl'
+      SubnetId: !Ref 'publicSubnet0'
+      
+  publicSubnet1Acl:
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId: !Ref 'networkAcl'
+      SubnetId: !Ref 'publicSubnet1'
+      
+  privateSubnet0Acl:
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId: !Ref 'networkAcl'
+      SubnetId: !Ref 'privateSubnet0'
+      
+  privateSubnet1Acl:
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId: !Ref 'networkAcl'
+      SubnetId: !Ref 'privateSubnet1'
+      
+  publicSubnet0:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref 'VPC'
+      CidrBlock: 10.0.0.0/24
+      AvailabilityZone: !Select ['0', !GetAZs {Ref: 'AWS::Region'}]
+      Tags:
+      - Key: Name
+        Value: publicSubnet0
+
+  publicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref 'VPC'
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: !Select ['1', !GetAZs {Ref: 'AWS::Region'}]
+      Tags:
+      - Key: Name
+        Value: publicSubnet1
+
+  privateSubnet0:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref 'VPC'
+      CidrBlock: 10.0.3.0/24
+      AvailabilityZone: !Select ['0', !GetAZs {Ref: 'AWS::Region'}]
+      Tags:
+      - Key: Name
+        Value: privateSubnet0
+
+  privateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref 'VPC'
+      CidrBlock: 10.0.4.0/24
+      AvailabilityZone: !Select ['1', !GetAZs {Ref: 'AWS::Region'}]
+      Tags:
+      - Key: Name
+        Value: privateSubnet1
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+      - Key: Name
+        Value: app
+
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    DependsOn: InternetGateway
+    Properties:
+      VpcId: !Ref 'VPC'
+      InternetGatewayId: !Ref 'InternetGateway'
+
+  publicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref 'VPC'
+      Tags:
+      - Key: Name
+        Value: appPublic
+
+  publicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref 'publicRouteTable'
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref 'InternetGateway'
+
+  publicSubnet0RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref 'publicSubnet0'
+      RouteTableId: !Ref 'publicRouteTable'
+
+  publicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref 'publicSubnet1'
+      RouteTableId: !Ref 'publicRouteTable'
+
+  privateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref 'VPC'
+      Tags:
+      - Key: Name
+        Value: appPrivate
+
+  privateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref 'privateRouteTable'
+      DestinationCidrBlock: 0.0.0.0/0
+      InstanceId: !Ref 'natInstance'
+
+  privateSubnet0RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref 'privateSubnet0'
+      RouteTableId: !Ref 'privateRouteTable'
+
+  privateSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref 'privateSubnet1'
+      RouteTableId: !Ref 'privateRouteTable'
+
+  elbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: appElb
+      VpcId: !Ref 'VPC'
+      Tags:
+      - Key: Name
+        Value: appElb
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: '80'
+        ToPort: '80'
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: '443'
+        ToPort: '443'
+        CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+      - IpProtocol: '-1'
+        FromPort: '-1'
+        ToPort: '-1'
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: '80'
+        ToPort: '80'
+        DestinationSecurityGroupId: !Ref 'appSecurityGroup'
+      - IpProtocol: tcp
+        FromPort: '443'
+        ToPort: '443'
+        DestinationSecurityGroupId: !Ref 'appSecurityGroup'
+      - IpProtocol: tcp
+        FromPort: '22'
+        ToPort: '22'
+        DestinationSecurityGroupId: !Ref 'appSecurityGroup'
+
+  natSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: appNat
+      VpcId: !Ref 'VPC'
+      Tags:
+      - Key: Name
+        Value: appNat
+      SecurityGroupEgress:
+      - IpProtocol: '-1'
+        FromPort: '-1'
+        ToPort: '-1'
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: '-1'
+        FromPort: '-1'
+        ToPort: '-1'
+        DestinationSecurityGroupId: !Ref 'appSecurityGroup'
+      SecurityGroupIngress:
+      - IpProtocol: '-1'
+        FromPort: '-1'
+        ToPort: '-1'
+        SourceSecurityGroupId: !Ref 'appSecurityGroup'
+      - IpProtocol: '-1'
+        FromPort: '-1'
+        ToPort: '-1'
+        SourceSecurityGroupId: !Ref 'elbSecurityGroup'
+
+  appSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: app
+      VpcId: !Ref 'VPC'
+      Tags:
+      - Key: Name
+        Value: app
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: '80'
+        ToPort: '80'
+        SourceSecurityGroupId: !Ref 'elbSecurityGroup'
+      - IpProtocol: tcp
+        FromPort: '22'
+        ToPort: '22'
+        SourceSecurityGroupId: !Ref 'elbSecurityGroup'
+      - IpProtocol: '-1'
+        FromPort: '-1'
+        ToPort: '-1'
+        SourceSecurityGroupId: !Ref 'natSecurityGroup'
+      SecurityGroupEgress:
+      - IpProtocol: '-1'
+        FromPort: '-1'
+        ToPort: '-1'
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: '-1'
+        FromPort: '-1'
+        ToPort: '-1'
+        DestinationSecurityGroupId: !Ref 'natSecurityGroup'
+      - IpProtocol: '-1'
+        FromPort: '-1'
+        ToPort: '-1'
+        DestinationSecurityGroupId: !Ref 'elbSecurityGroup'
+
+  appRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+      - !Ref 'appManagedPolicy'
+
+  appInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+      - !Ref 'appRole'
+
+  appManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: app
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action: '*'
+          Resource: '*'
+
+  autoscalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      VPCZoneIdentifier:
+      - !Ref 'privateSubnet0'
+      - !Ref 'privateSubnet1'
+      LaunchConfigurationName: !Ref 'launchConfiguration'
+      MinSize: '1'
+      MaxSize: '1'
+      LoadBalancerNames:
+      - !Ref 'elasticLoadBalancer'
+      Tags:
+      - Key: Name
+        Value: appHost
+        PropagateAtLaunch: 'true'
+
+  natInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      Tags:
+      - Key: Name
+        Value: natInstance
+      ImageId: !FindInMap [RegionMap, !Ref 'AWS::Region', nat]
+      InstanceType: !FindInMap [RegionMap, !Ref 'AWS::Region', natType]
+      KeyName: app
+      SourceDestCheck: 'false'
+      NetworkInterfaces:
+      - AssociatePublicIpAddress: 'true'
+        DeviceIndex: '0'
+        DeleteOnTermination: 'true'
+        SubnetId: !Ref 'publicSubnet0'
+        GroupSet:
+        - !Ref 'natSecurityGroup'
+
+  elasticLoadBalancer:
+    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Properties:
+      Subnets:
+      - !Ref 'publicSubnet0'
+      - !Ref 'publicSubnet1'
+      ConnectionSettings:
+        IdleTimeout: '600'
+      CrossZone: 'true'
+      SecurityGroups:
+      - !Ref 'elbSecurityGroup'
+      LoadBalancerName: app
+      Listeners:
+      - InstancePort: '80'
+        LoadBalancerPort: '80'
+        Protocol: HTTP
+        InstanceProtocol: HTTP
+      HealthCheck:
+        Target: TCP:22
+        HealthyThreshold: '2'
+        UnhealthyThreshold: '2'
+        Interval: '5'
+        Timeout: '4'
+
+  launchConfiguration:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      IamInstanceProfile: !Ref 'appInstanceProfile'
+      ImageId: !FindInMap [RegionMap, !Ref 'AWS::Region', app]
+      InstanceType: t2.micro
+      KeyName: app
+      SecurityGroups:
+      - !Ref 'appSecurityGroup'
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          # update package lists and get dependencies
+          apt-get update
+          apt-get install -y nginx
+          service nginx stop # otherwise it will go into service behind ELB with nginx splash screen
+          apt-get install -y nginx uwsgi uwsgi-plugin-python python-pip git
+          pip install virtualenv
+
+          # grab our code
+          git clone ${AppGitRepo}
+
+          # set up filesystem and virtualenv
+          mkdir -p /var/www/myapp
+          virtualenv /var/www/myapp/env
+          source /var/www/myapp/env/bin/activate
+          pip install bottle boto3 requests
+          deactivate
+          chown -R www-data:www-data /var/www/myapp
+
+          # copy files from local git repo out to where they belong on the filesystem
+          cp -f /Infrax-as-Code-1000-webservers-in-40-minutes/environment/default /etc/nginx/sites-enabled/default
+          cp -f /Infrax-as-Code-1000-webservers-in-40-minutes/environment/uwsgi.ini /etc/uwsgi/apps-enabled/uwsgi.ini
+          cp -f /Infrax-as-Code-1000-webservers-in-40-minutes/environment/cloudwatchlogsagent.config /var/cloudwatchlogsagent.config
+          cp -f /Infrax-as-Code-1000-webservers-in-40-minutes/index.py /var/www/myapp/index.py
+          cp -f /Infrax-as-Code-1000-webservers-in-40-minutes/index.html /var/www/myapp/index.html
+          
+          # install and configure cloudwatch logs agent
+          curl https://s3.amazonaws.com//aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O
+          chmod +x ./awslogs-agent-setup.py
+          ./awslogs-agent-setup.py -n -r us-east-1 -c /var/cloudwatchlogsagent.config
+
+          # restart services to load new configs and engage uwsgi to our app
+          service nginx start
+          service uwsgi restart
+
+  dnsRecordSet:
+    Type: AWS::Route53::RecordSet
+    Condition: DeployDnsRecordSet
+    Properties:
+      HostedZoneName: !Ref 'HostedZoneName'
+      Name: !Join [ ".", [ !Ref 'AppDnsName', !Ref 'HostedZoneName' ] ]
+      Type: CNAME
+      TTL: '5'
+      SetIdentifier: !Ref 'AWS::Region'
+      Weight: 1
+      ResourceRecords:
+      - !GetAtt 'elasticLoadBalancer.DNSName' 
+

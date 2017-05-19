@@ -1,0 +1,6 @@
+#!/bin/bash
+
+sudo yum -y update
+sudo yum -y install httpd24 php56
+sudo chkconfig httpd on
+sudo service httpd start

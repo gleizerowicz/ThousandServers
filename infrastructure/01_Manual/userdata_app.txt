@@ -1,0 +1,13 @@
+#!/bin/bash
+
+sudo yum -y update
+
+sudo mkdir /var/aspnetcoreapps
+cd /var/aspnetcoreapps
+
+sudo git clone https://github.com/gleizerowicz/nancy-hello-world.git
+
+cd nancy-hello-world/NancyHelloWorld
+
+sudo dotnet restore
+sudo dotnet run

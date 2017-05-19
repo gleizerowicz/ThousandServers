@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: codepipeline to deploy infrastructure from github repo - deploy once in each region
+
+Parameters:
+  AutomationRole:
+    Type: String
+    Description: "ARN of the role to be used by the CodePipeline service"
+    Default: "arn:aws:iam::249436956351:role/ThousandServersSetup-AutomationRole-123U1YFCF78EV"
+
+Resources:
+  ArtifactBucket:
+    Type: AWS::S3::Bucket
+
+  Pipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: ThousandServersIaC
+      RoleArn:
+        !Ref "AutomationRole" 
+      ArtifactStore:
+        Type: S3
+        Location: !Ref "ArtifactBucket"
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: SourceAction
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Version: 1
+                Provider: GitHub
+              OutputArtifacts:
+                - Name: SourceOuput

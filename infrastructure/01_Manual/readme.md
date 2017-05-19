@@ -1,0 +1,1 @@
+single instance, single AZ, user data bootstrap
