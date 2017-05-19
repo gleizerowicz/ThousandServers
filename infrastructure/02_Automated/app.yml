@@ -276,32 +276,60 @@ Resources:
       Tags:
       - Key: Name
         Value: appElb
-      SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: '80'
-        ToPort: '80'
-        CidrIp: 0.0.0.0/0
-      - IpProtocol: tcp
-        FromPort: '443'
-        ToPort: '443'
-        CidrIp: 0.0.0.0/0
-      SecurityGroupEgress:
-      - IpProtocol: '-1'
-        FromPort: '-1'
-        ToPort: '-1'
-        CidrIp: 0.0.0.0/0
-      - IpProtocol: tcp
-        FromPort: '80'
-        ToPort: '80'
-        DestinationSecurityGroupId: !Ref 'appSecurityGroup'
-      - IpProtocol: tcp
-        FromPort: '443'
-        ToPort: '443'
-        DestinationSecurityGroupId: !Ref 'appSecurityGroup'
-      - IpProtocol: tcp
-        FromPort: '22'
-        ToPort: '22'
-        DestinationSecurityGroupId: !Ref 'appSecurityGroup'
+  
+  elbIngressHttp:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref 'elbSecurityGroup'
+      IpProtocol: tcp
+      FromPort: '80'
+      ToPort: '80'
+      CidrIp: 0.0.0.0/0
+  
+  elbIngressHttps:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref 'elbSecurityGroup'
+      IpProtocol: tcp
+      FromPort: '443'
+      ToPort: '443'
+      CidrIp: 0.0.0.0/0
+  
+  elbEgressAll:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref 'elbSecurityGroup'
+      IpProtocol: '-1'
+      FromPort: '-1'
+      ToPort: '-1'
+      CidrIp: 0.0.0.0/0
+
+  elbEgressHttp:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref 'elbSecurityGroup'
+      IpProtocol: tcp
+      FromPort: '80'
+      ToPort: '80'
+      DestinationSecurityGroupId: !Ref 'appSecurityGroup'
+
+  elbEgressHttps:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref 'elbSecurityGroup'
+      IpProtocol: tcp
+      FromPort: '443'
+      ToPort: '443'
+      DestinationSecurityGroupId: !Ref 'appSecurityGroup'
+
+  elbEgressSsh:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref 'elbSecurityGroup'
+      IpProtocol: tcp
+      FromPort: '22'
+      ToPort: '22'
+      DestinationSecurityGroupId: !Ref 'appSecurityGroup'
 
   natSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -311,24 +339,42 @@ Resources:
       Tags:
       - Key: Name
         Value: appNat
-      SecurityGroupEgress:
-      - IpProtocol: '-1'
-        FromPort: '-1'
-        ToPort: '-1'
-        CidrIp: 0.0.0.0/0
-      - IpProtocol: '-1'
-        FromPort: '-1'
-        ToPort: '-1'
-        DestinationSecurityGroupId: !Ref 'appSecurityGroup'
-      SecurityGroupIngress:
-      - IpProtocol: '-1'
-        FromPort: '-1'
-        ToPort: '-1'
-        SourceSecurityGroupId: !Ref 'appSecurityGroup'
-      - IpProtocol: '-1'
-        FromPort: '-1'
-        ToPort: '-1'
-        SourceSecurityGroupId: !Ref 'elbSecurityGroup'
+
+  natIngressAllApp:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref 'natSecurityGroup'
+      IpProtocol: '-1'
+      FromPort: '-1'
+      ToPort: '-1'
+      SourceSecurityGroupId: !Ref 'appSecurityGroup'
+
+  natIngressAllElb:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref 'natSecurityGroup'
+      IpProtocol: '-1'
+      FromPort: '-1'
+      ToPort: '-1'
+      SourceSecurityGroupId: !Ref 'elbSecurityGroup'
+
+  natEgressAll:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref 'natSecurityGroup'
+      IpProtocol: '-1'
+      FromPort: '-1'
+      ToPort: '-1'
+      CidrIp: 0.0.0.0/0
+
+  natEgressAllApp:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref 'natSecurityGroup'
+      IpProtocol: '-1'
+      FromPort: '-1'
+      ToPort: '-1'
+      DestinationSecurityGroupId: !Ref 'appSecurityGroup'
 
   appSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -338,29 +384,66 @@ Resources:
       Tags:
       - Key: Name
         Value: app
-      SecurityGroupIngress:
-      - IpProtocol: tcp
+  
+  appIngressHttp:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+        GroupId: !Ref 'appSecurityGroup'
+        IpProtocol: tcp
         FromPort: '80'
         ToPort: '80'
         SourceSecurityGroupId: !Ref 'elbSecurityGroup'
-      - IpProtocol: tcp
+
+  appIngressHttps:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+        GroupId: !Ref 'appSecurityGroup'
+        IpProtocol: tcp
+        FromPort: '443'
+        ToPort: '443'
+        SourceSecurityGroupId: !Ref 'elbSecurityGroup'
+
+  appIngressSsh:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+        GroupId: !Ref 'appSecurityGroup'
+        IpProtocol: tcp
         FromPort: '22'
         ToPort: '22'
         SourceSecurityGroupId: !Ref 'elbSecurityGroup'
-      - IpProtocol: '-1'
+
+  appIngressAll:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+        GroupId: !Ref 'appSecurityGroup'
+        IpProtocol: '-1'
         FromPort: '-1'
         ToPort: '-1'
         SourceSecurityGroupId: !Ref 'natSecurityGroup'
-      SecurityGroupEgress:
-      - IpProtocol: '-1'
+
+  appEgressAll:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+        GroupId: !Ref 'appSecurityGroup'
+        IpProtocol: '-1'
         FromPort: '-1'
         ToPort: '-1'
         CidrIp: 0.0.0.0/0
-      - IpProtocol: '-1'
+
+  appEgressAllNat:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+        GroupId: !Ref 'appSecurityGroup'
+        IpProtocol: '-1'
         FromPort: '-1'
         ToPort: '-1'
         DestinationSecurityGroupId: !Ref 'natSecurityGroup'
-      - IpProtocol: '-1'
+
+  appEgressAllElb:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+        GroupId: !Ref 'appSecurityGroup'
+        IpProtocol: '-1'
         FromPort: '-1'
         ToPort: '-1'
         DestinationSecurityGroupId: !Ref 'elbSecurityGroup'
