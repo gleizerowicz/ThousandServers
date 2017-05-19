@@ -419,7 +419,7 @@ Resources:
       IpProtocol: '-1'
       FromPort: '-1'
       ToPort: '-1'
-      SourceSecurityGroupId: !Ref 'natSecurityGroup'
+      CidrIp: 0.0.0.0/0
 
   appEgressAll:
     Type: AWS::EC2::SecurityGroupEgress
