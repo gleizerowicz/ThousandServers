@@ -5,16 +5,18 @@ Parameters:
   AutomationRole:
     Type: String
     Description: "ARN of the role to be used by the CodePipeline service"
-    Default: "arn:aws:iam::249436956351:role/ThousandServersSetup-AutomationRole-123U1YFCF78EV"
+    Default: "arn:aws:iam::892774835300:role/ThousandServersBootstrap-AutomationRole-1HQFBRP4LDTPX"
 
 Resources:
   ArtifactBucket:
     Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "codepipeline-${AWS::Region}-${AWS::AccountId}"
 
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: ThousandServersIaC
+      Name: ThousandServers02
       RoleArn:
         !Ref "AutomationRole" 
       ArtifactStore:
@@ -26,8 +28,29 @@ Resources:
             - Name: SourceAction
               ActionTypeId:
                 Category: Source
-                Owner: AWS
+                Owner: ThirdParty
                 Version: 1
                 Provider: GitHub
+              Configuration:
+                Owner: gleizerowicz
+                Repo: ThousandServers
+                Branch: master
+                OAuthToken: REPLACE_WITH_A_TOKEN_FROM_GITHUB
               OutputArtifacts:
-                - Name: SourceOuput
+                - Name: SourceOutput
+        - Name: Deploy
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: 1
+                Provider: CloudFormation
+              Configuration:
+                StackName: ThousandServersAuto
+                ActionMode: CREATE_UPDATE
+                RoleArn: !Ref AutomationRole
+                Capabilities: CAPABILITY_IAM
+                TemplatePath: "SourceOutput::infrastructure/02_Automated/app.yml"
+              InputArtifacts:
+                - Name: SourceOutput

@@ -10,6 +10,7 @@ Parameters:
   InstanceProfileArn:
     Type: String
     Description: Instance Profile ARN if it already exists (if this is a new region)
+    Default: ""
 
   HostedZoneName:
     Default: leizerodemo.net.
