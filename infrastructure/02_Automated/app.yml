@@ -378,8 +378,8 @@ Resources:
       - !Ref 'privateSubnet0'
       - !Ref 'privateSubnet1'
       LaunchConfigurationName: !Ref 'launchConfiguration'
-      MinSize: '10'
-      MaxSize: '10'
+      MinSize: '1'
+      MaxSize: '1'
       LoadBalancerNames:
       - !Ref 'elasticLoadBalancer'
       Tags:
@@ -423,7 +423,7 @@ Resources:
         Protocol: HTTP
         InstanceProtocol: HTTP
       HealthCheck:
-        Target: HTTP:80/
+        Target: TCP:22
         HealthyThreshold: '2'
         UnhealthyThreshold: '2'
         Interval: '5'
