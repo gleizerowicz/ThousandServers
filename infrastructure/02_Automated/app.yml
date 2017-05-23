@@ -336,6 +336,7 @@ Resources:
     Type: AWS::IAM::Role
     Condition: CreateIamResources
     Properties:
+      RoleName: ThousandServers-appRole
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -353,6 +354,7 @@ Resources:
     Type: AWS::IAM::InstanceProfile
     Condition: CreateIamResources
     Properties:
+      InstanceProfileName: ThousandServers-appInstanceProfile
       Path: /
       Roles:
       - !Ref 'appRole'
@@ -376,8 +378,8 @@ Resources:
       - !Ref 'privateSubnet0'
       - !Ref 'privateSubnet1'
       LaunchConfigurationName: !Ref 'launchConfiguration'
-      MinSize: '4'
-      MaxSize: '4'
+      MinSize: '1'
+      MaxSize: '1'
       LoadBalancerNames:
       - !Ref 'elasticLoadBalancer'
       Tags:

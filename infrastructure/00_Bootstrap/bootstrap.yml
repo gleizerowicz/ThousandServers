@@ -186,3 +186,7 @@ Outputs:
   DynamoDbTableName:
     Description: dynamodb table name
     Value: !Ref DynamoDbTable
+
+  AutomationRoleArn:
+    Description: ARN of the role to use for automation (codepipeline, cloudformation)
+    Value: !Ref AutomationRole

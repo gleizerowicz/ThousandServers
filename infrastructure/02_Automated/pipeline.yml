@@ -4,8 +4,13 @@ Description: codepipeline to deploy infrastructure from github repo - deploy onc
 Parameters:
   AutomationRole:
     Type: String
-    Description: "ARN of the role to be used by the CodePipeline service"
+    Description: "ARN of the role to be used by the CodePipeline service - Get the ARN from the bootstrap stack outputs"
     Default: "arn:aws:iam::892774835300:role/ThousandServersBootstrap-AutomationRole-1HQFBRP4LDTPX"
+
+  InstanceProfileArn:
+    Type: String
+    Description: "ARN of the role to be used by the EC2 launch config - it is created by app.yml in the first region"
+    Default: ""
 
 Resources:
   ArtifactBucket:
@@ -35,7 +40,7 @@ Resources:
                 Owner: gleizerowicz
                 Repo: ThousandServers
                 Branch: master
-                OAuthToken: REPLACE_WITH_A_TOKEN_FROM_GITHUB
+                OAuthToken: REPLACE_OAUTH_TOKEN
               OutputArtifacts:
                 - Name: SourceOutput
         - Name: Deploy
@@ -52,5 +57,7 @@ Resources:
                 RoleArn: !Ref AutomationRole
                 Capabilities: CAPABILITY_IAM
                 TemplatePath: "SourceOutput::infrastructure/02_Automated/app.yml"
+                ParameterOverrides: !Sub |
+                  { "InstanceProfileArn": "${InstanceProfileArn}" }
               InputArtifacts:
                 - Name: SourceOutput
