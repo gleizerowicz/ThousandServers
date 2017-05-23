@@ -32,14 +32,15 @@ foreach($region in $regions)
     Write-Host "*************************************"
 }
 
-foreach($region in $regions)
-{
-    aws cloudformation describe-stacks `
-        --stack-name ThousandServersAuto `
-        --region us-west-2 |
-        ConvertFrom-Json |
-        select -expand Stacks |
-        select StackId, StackStatus
+
+# foreach($region in $regions)
+# {
+#     aws cloudformation describe-stacks `
+#         --stack-name ThousandServersAuto `
+#         --region $region |
+#         ConvertFrom-Json |
+#         select -expand Stacks |
+#         select StackId, StackStatus
     
-    Start-Sleep -s 10
-}
+#     Start-Sleep -s 10
+# }
