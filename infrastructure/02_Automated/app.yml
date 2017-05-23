@@ -423,7 +423,7 @@ Resources:
         Protocol: HTTP
         InstanceProtocol: HTTP
       HealthCheck:
-        Target: TCP:22
+        Target: HTTP:80/
         HealthyThreshold: '2'
         UnhealthyThreshold: '2'
         Interval: '5'
