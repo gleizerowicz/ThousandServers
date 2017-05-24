@@ -378,8 +378,8 @@ Resources:
       - !Ref 'privateSubnet0'
       - !Ref 'privateSubnet1'
       LaunchConfigurationName: !Ref 'launchConfiguration'
-      MinSize: '1'
-      MaxSize: '1'
+      MinSize: '4'
+      MaxSize: '4'
       LoadBalancerNames:
       - !Ref 'elasticLoadBalancer'
       Tags:
