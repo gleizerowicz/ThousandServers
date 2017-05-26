@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: sam template for cf deployment lambda
+
+Parameters:
+  AutomationRole:
+    Type: String
+    Description: "ARN of the role to be used by the CodePipeline service - Get the ARN from the bootstrap stack outputs"
+    Default: "arn:aws:iam::892774835300:role/ThousandServersBootstrap-AutomationRole-1HQFBRP4LDTPX"
+
+Resources:
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs4.3
+      CodeUri: ./src
+      Role: !Ref AutomationRole
