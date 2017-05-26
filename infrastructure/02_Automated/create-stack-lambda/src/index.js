@@ -8,30 +8,57 @@ exports.handler = (event, context, callback) => {
 
     event.Regions
     .forEach(function(region) {
-        console.log('creating stack in region ' + region);
-
+        
         const cfn = new aws.CloudFormation({ region: region });
-        const createStackInput = {
-            StackName: event.StackName,
-            TemplateURL: event.TemplateURL
-        };
 
-        cfn.createStack(createStackInput, (err, data) => {
-            var success = false;
+        cfn.describeStacks( { StackName: event.StackName }, (err, data) => {
 
             if (err) {
-                console.log('creating stack in region ' + region + ' failed: ' + err);
+
+                console.log('creating stack in region ' + region);
+
+                cfn.createStack({ StackName: event.StackName, TemplateURL: event.TemplateURL }, (err, data) => {
+                    var success = false;
+
+                    if (err) {
+                        console.log('creating stack in region ' + region + ' failed: ' + err);
+                    } else {
+                        console.log('creating stack in region ' + region + ' suceeded');
+                        success = true;
+                    }
+
+                    regionsCompleted.push(
+                        { region: region, success: success }
+                    );
+
+                    if (regionsCompleted.length === totalRegions) {
+                        callback(null, 'complete');
+                    }
+                });
+
             } else {
-                console.log('creating stack in region ' + region + ' suceeded');
-                success = true;
-            }
+                
+                console.log('updating stack in region ' + region);
 
-            regionsCompleted.push(
-                { region: region, success: success }
-            );
+                cfn.updateStack({ StackName: event.StackName, TemplateURL: event.TemplateURL }, (err, data) => {
+                    var success = false;
 
-            if (regionsCompleted.length === totalRegions) {
-                callback(null, 'complete');
+                    if (err) {
+                        console.log('updating stack in region ' + region + ' failed: ' + err);
+                    } else {
+                        console.log('updating stack in region ' + region + ' suceeded');
+                        success = true;
+                    }
+
+                    regionsCompleted.push(
+                        { region: region, success: success }
+                    );
+
+                    if (regionsCompleted.length === totalRegions) {
+                        callback(null, 'complete');
+                    }
+                });
+
             }
         });
 
