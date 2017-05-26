@@ -8,13 +8,24 @@ describe('myLambda', function(){
 
     [
         {
-            "StackName": "createbuckettest",
-            "TemplateURL": "https://s3.amazonaws.com/cf-templates-co68z4psazmn-us-east-1/createbucket.yml",
-            "Regions": [
-                "us-east-1",
-                "us-east-2"
-            ]
+            "CodePipeline.job": {
+                "data": {
+                    "actionConfiguration": {
+                        "configuration": {
+                            "UserParameters": {
+                                "StackName": "createbuckettest",
+                                "TemplateURL": "https://s3.amazonaws.com/cf-templates-co68z4psazmn-us-east-1/createbucket.yml",
+                                "Regions": [
+                                    "us-east-1",
+                                    "us-east-2"
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
         }
+                
     ].forEach(function(event) {
         
         it('should deploy a stack to specified regions',
