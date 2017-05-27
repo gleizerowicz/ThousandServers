@@ -9,7 +9,7 @@ Parameters:
 Resources:
   LambdaFunction:
     Properties:
-      CodeUri: s3://sam-us-east-1-892774835300/fec2f254274d19baf184748d50d7fc41
+      CodeUri: s3://sam-us-east-1-892774835300/35712a2551c31149ad3a0757bd53160f
       Handler: index.handler
       Role:
         Ref: AutomationRole

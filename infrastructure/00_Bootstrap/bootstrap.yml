@@ -146,6 +146,13 @@ Resources:
           - codebuild:BatchGetBuilds
           - codebuild:StartBuild
           Resource: '*'
+        - Effect: Allow
+          Action:
+          - codepipeline:AcknowledgeJob
+          - codepipeline:GetJobDetails
+          - codepipeline:PutJobFailureResult
+          - codepipeline:PutJobSuccessResult
+          Resource: '*'
 
   DynamoDbTable:
     Type: AWS::DynamoDB::Table

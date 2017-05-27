@@ -1,7 +1,6 @@
 'use strict';
 
 var expect = require('chai').expect;
-// var LambdaTester = require('lambda-tester');
 var myLambda = require('../index');
 
 describe('myLambda', function(){
@@ -9,17 +8,11 @@ describe('myLambda', function(){
     [
         {
             "CodePipeline.job": {
+                "id": "XXXXX",
                 "data": {
                     "actionConfiguration": {
                         "configuration": {
-                            "UserParameters": {
-                                "StackName": "createbuckettest",
-                                "TemplateURL": "https://s3.amazonaws.com/cf-templates-co68z4psazmn-us-east-1/createbucket.yml",
-                                "Regions": [
-                                    "us-east-1",
-                                    "us-east-2"
-                                ]
-                            }
+                            "UserParameters": "{ \"StackName\": \"createbuckettest\", \"TemplateURL\": \"https://s3.amazonaws.com/cf-templates-co68z4psazmn-us-east-1/createbucket.yml\", \"Regions\": [ \"us-east-1\", \"us-east-2\" ] }"
                         }
                     }
                 }
