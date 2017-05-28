@@ -7,11 +7,6 @@ Parameters:
     Description: "ARN of the role to be used by the CodePipeline service - Get the ARN from the bootstrap stack outputs"
     Default: "arn:aws:iam::892774835300:role/ThousandServersBootstrap-AutomationRole-1HQFBRP4LDTPX"
 
-  InstanceProfileArn:
-    Type: String
-    Description: "ARN of the role to be used by the EC2 launch config - it is created by app.yml in the first region"
-    Default: ""
-
 Resources:
   ArtifactBucket:
     Type: AWS::S3::Bucket
@@ -21,7 +16,7 @@ Resources:
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: ThousandServers02
+      Name: ThousandServersMultiRegion
       RoleArn:
         !Ref "AutomationRole" 
       ArtifactStore:
@@ -47,17 +42,12 @@ Resources:
           Actions:
             - Name: DeployAction
               ActionTypeId:
-                Category: Deploy
+                Category: Invoke
                 Owner: AWS
                 Version: 1
-                Provider: CloudFormation
+                Provider: Lambda
               Configuration:
-                StackName: ThousandServersAuto
-                ActionMode: CREATE_UPDATE
-                RoleArn: !Ref AutomationRole
-                Capabilities: CAPABILITY_IAM
-                TemplatePath: "SourceOutput::infrastructure/02_Automated/app.yml"
-                ParameterOverrides: !Sub |
-                  { "InstanceProfileArn": "${InstanceProfileArn}" }
+                FunctionName: deploy-template-lambda-LambdaFunction-1NN0S5WFHZ2AL
+                UserParameters: "{ \"StackName\": \"ThousandServersAuto\", \"TemplateFile\": \"infrastructure/02_Automated/app.yml\", \"RegionsFile\": \"infrastructure/02_Automated/regions.json\" }"
               InputArtifacts:
                 - Name: SourceOutput
