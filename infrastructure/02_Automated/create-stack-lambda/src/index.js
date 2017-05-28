@@ -110,6 +110,11 @@ exports.handler = (event, context, callback) => {
                 regions.forEach(function(region) {
                     
                     const cfn = new aws.CloudFormation({ region: region.region });
+                    var stackOptions = {
+                        StackName: userParameters.StackName,
+                        TemplateBody: templateBody,
+                        Capabilities: [ "CAPABILITY_NAMED_IAM" ]
+                    };
 
                     cfn.describeStacks( { StackName: userParameters.StackName }, (err, data) => {
 
@@ -117,7 +122,7 @@ exports.handler = (event, context, callback) => {
 
                             console.log('creating stack in region ' + region.region);
 
-                            cfn.createStack({ StackName: userParameters.StackName, TemplateBody: templateBody }, (err, data) => {
+                            cfn.createStack(stackOptions, (err, data) => {
                                 
                                 cfnCallback(callback, region.region, 'creating', err, codePipelineJob.id);
 
@@ -127,7 +132,7 @@ exports.handler = (event, context, callback) => {
                             
                             console.log('updating stack in region ' + region.region);
 
-                            cfn.updateStack({ StackName: userParameters.StackName, TemplateBody: templateBody }, (err, data) => {
+                            cfn.updateStack(stackOptions, (err, data) => {
                                 
                                 cfnCallback(callback, region.region, 'updating', err, codePipelineJob.id);
 

@@ -32,8 +32,6 @@ Parameters:
 
 Conditions: 
   DeployDnsRecordSet: !Equals [ !Ref UseRoute53, true ]
-
-  CreateIamResources: !Equals [ !Ref InstanceProfileArn, '' ]
   
 Mappings:
   RegionMap:
@@ -332,45 +330,6 @@ Resources:
         ToPort: '-1'
         CidrIp: 0.0.0.0/0
 
-  appRole:
-    Type: AWS::IAM::Role
-    Condition: CreateIamResources
-    Properties:
-      RoleName: ThousandServers-appRole
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-        - Effect: Allow
-          Principal:
-            Service:
-            - ec2.amazonaws.com
-          Action:
-          - sts:AssumeRole
-      Path: /
-      ManagedPolicyArns:
-      - !Ref 'appManagedPolicy'
-
-  appInstanceProfile:
-    Type: AWS::IAM::InstanceProfile
-    Condition: CreateIamResources
-    Properties:
-      InstanceProfileName: ThousandServers-appInstanceProfile
-      Path: /
-      Roles:
-      - !Ref 'appRole'
-
-  appManagedPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Condition: CreateIamResources
-    Properties:
-      Description: app
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-        - Effect: Allow
-          Action: '*'
-          Resource: '*'
-
   autoscalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
@@ -432,7 +391,7 @@ Resources:
   launchConfiguration:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
-      IamInstanceProfile: !If [ CreateIamResources, !Ref 'appInstanceProfile', !Ref 'InstanceProfileArn' ]
+      IamInstanceProfile: !Ref 'InstanceProfileArn'
       ImageId: !FindInMap [RegionMap, !Ref 'AWS::Region', app]
       InstanceType: t2.micro
       KeyName: app

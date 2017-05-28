@@ -191,6 +191,42 @@ Resources:
           Resource: !Sub "arn:aws:s3:::${S3Bucket}/*"
           Principal: '*'
 
+  appRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ThousandServers-appRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+      - !Ref 'appManagedPolicy'
+
+  appInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: ThousandServers-appInstanceProfile
+      Path: /
+      Roles:
+      - !Ref 'appRole'
+
+  appManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: app
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action: '*'
+          Resource: '*'
+
 Outputs:
   S3BucketName:
     Description: bucket name
