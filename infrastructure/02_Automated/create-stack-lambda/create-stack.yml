@@ -16,3 +16,5 @@ Resources:
       Runtime: nodejs4.3
       CodeUri: ./src
       Role: !Ref AutomationRole
+      MemorySize: 64
+      Timeout: 25
