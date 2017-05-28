@@ -10,7 +10,7 @@ Parameters:
   InstanceProfileArn:
     Type: String
     Description: Instance Profile ARN if it already exists (if this is a new region)
-    Default: ""
+    Default: "arn:aws:iam::892774835300:instance-profile/ThousandServers-appInstanceProfile"
 
   HostedZoneName:
     Default: leizerodemo.net.
