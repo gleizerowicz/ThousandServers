@@ -1,6 +1,9 @@
 'use strict';
 
 var aws = require('aws-sdk');
+var async = require('async');
+var fs = require('fs');
+var JSZip = require('jszip');
 
 var regionsCompleted = [];
 var totalRegions = 0;
@@ -45,51 +48,107 @@ exports.handler = (event, context, callback) => {
     
     const codePipelineJob = event['CodePipeline.job'];
 
-    //TODO: setup an S3 client based on credentials in codePipelineJob.data.artifactCredentials
-    //TODO: get the cf template from the artifacts in S3
-    //TODO: get the region configuration from the artifacts in S3, parse into an array
-    //TODO: pass the template body instead of template url
-    //TODO: remove the TemplateURL from the parameters
-    //TODO: remove the Regions from the parameters
-    
     const userParameters = JSON.parse(codePipelineJob.data.actionConfiguration.configuration.UserParameters);
     
     console.log('JobId:' + codePipelineJob.id);
     console.log('StackName:' + userParameters.StackName);
-    console.log('TemplateURL:' + userParameters.TemplateURL);
-    console.log('Regions:' + userParameters.Regions);
+    console.log('TemplateFile:' + userParameters.TemplateFile);
+    console.log('RegionsFile:' + userParameters.RegionsFile);
 
-    totalRegions = userParameters.Regions.length;
-    
-    userParameters.Regions
-    .forEach(function(region) {
-        
-        const cfn = new aws.CloudFormation({ region: region });
-
-        cfn.describeStacks( { StackName: userParameters.StackName }, (err, data) => {
-
-            if (err) {
-
-                console.log('creating stack in region ' + region);
-
-                cfn.createStack({ StackName: userParameters.StackName, TemplateURL: userParameters.TemplateURL }, (err, data) => {
-                    
-                    cfnCallback(callback, region, 'creating', err, codePipelineJob.id);
-
-                });
-
-            } else {
-                
-                console.log('updating stack in region ' + region);
-
-                cfn.updateStack({ StackName: userParameters.StackName, TemplateURL: userParameters.TemplateURL }, (err, data) => {
-                    
-                    cfnCallback(callback, region, 'updating', err, codePipelineJob.id);
-
-                });
-
+    async.waterfall([
+        (asyncCallback) => {
+            var options = { signatureVersion: "v4" };
+            if (codePipelineJob.data.artifactCredentials.accessKeyId) {
+                options = {
+                    accessKeyId: codePipelineJob.data.artifactCredentials.accessKeyId,
+                    secretAccessKey: codePipelineJob.data.artifactCredentials.secretAccessKey,
+                    sessionToken: codePipelineJob.data.artifactCredentials.sessionToken,
+                    signatureVersion: "v4"
+                };
             }
-        });
+            const s3 = new aws.S3(options);
 
-    });
+            var getObjectParams = {
+                Bucket: codePipelineJob.data.inputArtifacts[0].location.s3Location.bucketName,
+                Key: codePipelineJob.data.inputArtifacts[0].location.s3Location.objectKey
+            };
+
+            s3.getObject(getObjectParams, (err, data) => {
+                if (err) {
+                    console.log(err);
+                    asyncCallback(err);
+                } else {
+                    JSZip.loadAsync(data.Body).then((zip) => {
+                        console.log("loaded zip file");                        
+                        asyncCallback(null, zip);
+                    });
+                }
+            });
+        },
+        (zip, asyncCallback) => {
+            zip.file(userParameters.TemplateFile).async("string").then((content) => {
+                var templateBody = content;
+                console.log("loaded template file from " + userParameters.TemplateFile);
+                asyncCallback(null, zip, templateBody);
+            });
+        },
+        (zip, templateBody, asyncCallback) => {
+            zip.file(userParameters.RegionsFile).async("string").then((content) => {
+                var regions = JSON.parse(content)
+                .regions
+                .filter((element) => {
+                    return element.deploy === "true"
+                });
+                console.log("loaded " + regions.length + " regions from " + userParameters.RegionsFile);
+                asyncCallback(null, regions, templateBody);
+            });     
+        },
+        (regions, templateBody, asyncCallback) => {
+            if (regions) {
+                totalRegions = regions.length;
+                
+                regions.forEach(function(region) {
+                    
+                    const cfn = new aws.CloudFormation({ region: region.region });
+
+                    cfn.describeStacks( { StackName: userParameters.StackName }, (err, data) => {
+
+                        if (err) {
+
+                            console.log('creating stack in region ' + region.region);
+
+                            cfn.createStack({ StackName: userParameters.StackName, TemplateBody: templateBody }, (err, data) => {
+                                
+                                cfnCallback(callback, region.region, 'creating', err, codePipelineJob.id);
+
+                            });
+
+                        } else {
+                            
+                            console.log('updating stack in region ' + region.region);
+
+                            cfn.updateStack({ StackName: userParameters.StackName, TemplateBody: templateBody }, (err, data) => {
+                                
+                                cfnCallback(callback, region.region, 'updating', err, codePipelineJob.id);
+
+                            });
+
+                        }
+                    });
+
+                });
+            } else {
+                console.log("no regions to deploy");
+            }
+
+            asyncCallback();
+        },
+        (err, result) =>
+        {
+            if (err) {
+                console.log(err);
+            }
+        }
+    ]);
+
 };

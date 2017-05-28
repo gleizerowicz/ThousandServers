@@ -12,8 +12,26 @@ describe('myLambda', function(){
                 "data": {
                     "actionConfiguration": {
                         "configuration": {
-                            "UserParameters": "{ \"StackName\": \"createbuckettest\", \"TemplateURL\": \"https://s3.amazonaws.com/cf-templates-co68z4psazmn-us-east-1/createbucket.yml\", \"Regions\": [ \"us-east-1\", \"us-east-2\" ] }"
+                            "UserParameters": "{ \"StackName\": \"createbuckettest\", \"TemplateFile\": \"infrastructure/02_Automated/createbucket.yml\", \"RegionsFile\": \"infrastructure/02_Automated/regions.json\" }"
                         }
+                    },
+                    "inputArtifacts": [
+                        {
+                            "location": {
+                                "s3Location": {
+                                    "bucketName": "codepipeline-us-east-1-976054769566",
+                                    "objectKey": "DeployBuckets/MyApp/WWwDGW5.zip"
+                                },
+                                "type": "S3"
+                            },
+                            "revision": null,
+                            "name": "MyApp"
+                        }
+                    ],
+                    "artifactCredentials": {
+                        "secretAccessKey": "",
+                        "sessionToken": "",
+                        "accessKeyId": ""
                     }
                 }
             }
