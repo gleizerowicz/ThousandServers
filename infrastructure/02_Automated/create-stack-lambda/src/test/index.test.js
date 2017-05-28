@@ -12,7 +12,7 @@ describe('myLambda', function(){
                 "data": {
                     "actionConfiguration": {
                         "configuration": {
-                            "UserParameters": "{ \"StackName\": \"createbuckettest\", \"TemplateFile\": \"infrastructure/02_Automated/createbucket.yml\", \"RegionsFile\": \"infrastructure/02_Automated/regions.json\" }"
+                            "UserParameters": "{ \"StackName\": \"ThousandServersAuto\", \"TemplateFile\": \"infrastructure/02_Automated/app.yml\", \"RegionsFile\": \"infrastructure/02_Automated/regions.json\" }"
                         }
                     },
                     "inputArtifacts": [
@@ -20,7 +20,7 @@ describe('myLambda', function(){
                             "location": {
                                 "s3Location": {
                                     "bucketName": "codepipeline-us-east-1-976054769566",
-                                    "objectKey": "DeployBuckets/MyApp/WWwDGW5.zip"
+                                    "objectKey": "DeployBuckets/MyApp/GB6wurO.zip"
                                 },
                                 "type": "S3"
                             },

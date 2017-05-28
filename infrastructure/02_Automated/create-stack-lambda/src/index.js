@@ -16,7 +16,7 @@ function cfnCallback(lambdaCallback, region, action, err, jobId)
     if (err && err != "ValidationError: No updates are to be performed.") {
         console.log(action + ' stack in region ' + region + ' failed: ' + err);
     } else {
-        console.log(action + ' stack in region ' + region + ' suceeded');
+        console.log(action + ' stack in region ' + region + ' succeeded');
         success = true;
     }
 
