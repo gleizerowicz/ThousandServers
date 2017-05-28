@@ -238,4 +238,8 @@ Outputs:
 
   AutomationRoleArn:
     Description: ARN of the role to use for automation (codepipeline, cloudformation)
-    Value: !Ref AutomationRole
+    Value: !GetAtt "AutomationRole.Arn"
+
+  InstanceProfileArn:
+    Description: ARN of the instance profile
+    Value: !GetAtt "appInstanceProfile.Arn"

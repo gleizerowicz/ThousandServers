@@ -9,7 +9,7 @@ Parameters:
 
   InstanceProfileArn:
     Type: String
-    Description: Instance Profile ARN if it already exists (if this is a new region)
+    Description: Instance Profile ARN (created in bootstrap template)
     Default: "arn:aws:iam::892774835300:instance-profile/ThousandServers-appInstanceProfile"
 
   HostedZoneName:
@@ -337,8 +337,8 @@ Resources:
       - !Ref 'privateSubnet0'
       - !Ref 'privateSubnet1'
       LaunchConfigurationName: !Ref 'launchConfiguration'
-      MinSize: '4'
-      MaxSize: '4'
+      MinSize: '1'
+      MaxSize: '1'
       LoadBalancerNames:
       - !Ref 'elasticLoadBalancer'
       Tags:
