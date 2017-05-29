@@ -5,6 +5,8 @@ var myLambda = require('../index');
 
 describe('myLambda', function(){
 
+    this.timeout(10000);
+    
     [
         {
             "CodePipeline.job": {
@@ -19,13 +21,13 @@ describe('myLambda', function(){
                         {
                             "location": {
                                 "s3Location": {
-                                    "bucketName": "codepipeline-us-east-1-976054769566",
-                                    "objectKey": "DeployBuckets/MyApp/GB6wurO.zip"
+                                    "bucketName": "codepipeline-us-east-1-892774835300",
+                                    "objectKey": "ThousandServersMulti/SourceOutp/3Nh3o0f.zip"
                                 },
                                 "type": "S3"
                             },
                             "revision": null,
-                            "name": "MyApp"
+                            "name": "SourceOutp"
                         }
                     ],
                     "artifactCredentials": {

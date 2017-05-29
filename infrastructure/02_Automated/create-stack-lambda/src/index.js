@@ -100,12 +100,13 @@ exports.handler = (event, context, callback) => {
                     return element.deploy === "true"
                 });
                 console.log("loaded " + regions.length + " regions from " + userParameters.RegionsFile);
+                totalRegions = regions.length;
+                regionsCompleted = [];
                 asyncCallback(null, regions, templateBody);
             });     
         },
         (regions, templateBody, asyncCallback) => {
-            if (regions) {
-                totalRegions = regions.length;
+            if (regions && regions.length > 0) {
                 
                 regions.forEach(function(region) {
                     
@@ -144,6 +145,10 @@ exports.handler = (event, context, callback) => {
                 });
             } else {
                 console.log("no regions to deploy");
+                codepipeline.putJobSuccessResult({ jobId: codePipelineJob.id }, (err, data) => {
+                    console.log("CodePipeline.PutJobSuccessResult:\n\tdata: " + data + "\n\terr:" + err);
+                });
+                callback(null, "Complete");
             }
 
             asyncCallback();
