@@ -3,4 +3,4 @@
 * Paste the dynamodb item from dynamodb.json into the table item editor in the console
 * Create Route 53 Hosted Zone manually
 * If demo ran before make sure Route 53 and DynamoDB are cleared/reset
-* Deploy all regions with InstanceCount = 0
+* Deploy all regions with InstanceCount = 0 (set all regions to true in regions.json, set instance count to 0 in app.yml, commit/push)
