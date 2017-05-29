@@ -164,8 +164,8 @@ Resources:
       - AttributeName: scope
         KeyType: HASH
       ProvisionedThroughput: 
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       TableName: app
 
   S3Bucket:

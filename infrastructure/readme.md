@@ -8,7 +8,7 @@ Demo actions:
 0. Setup account and resources (see 00_Bootstrap/readme.md)
 0a. do console pre-requisites
 0b. deploy bootstrap template
-0c. reset ddb table
+0c. reset ddb table, increase provisioned capacity to 15 read/25 write
 0d. Deploy a machine manually to a public subnet using the userdata in 01_Manual/userdata_app.txt  - make sure it goes in the World security group
 0e. Deploy to all regions with instance count = 0
 0f. need load generator
@@ -25,3 +25,4 @@ Demo actions:
 
 Teardown after demo:
 1. run 02_Automated/delete-stacks.ps1 or set intance count to zero, all regions to true, commit/push
+2. decrease provisioned capacity of ddb table to 1/1

@@ -1,7 +1,6 @@
 param (
     [string[]]$regions = @(
         "us-east-2",
-        "us-east-1",
         "us-west-1",
         "us-west-2",
         "ca-central-1",
@@ -19,12 +18,12 @@ param (
 
 # .\remove-buckets.ps1 -regions $regions
 
-# foreach($region in $regions)
-# {
-#     aws cloudformation delete-stack `
-#         --stack-name ThousandServersAuto `
-#         --region $region
-# }
+foreach($region in $regions)
+{
+    aws cloudformation delete-stack `
+        --stack-name ThousandServersAuto `
+        --region $region
+}
 
 foreach($region in $regions)
 {
