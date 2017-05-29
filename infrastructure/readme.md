@@ -10,7 +10,8 @@ Demo actions:
 0b. deploy bootstrap template
 0c. reset ddb table
 0d. Deploy a machine manually to a public subnet using the userdata in 01_Manual/userdata_app.txt  - make sure it goes in the World security group
-0e. need load generator
+0e. Deploy to all regions with instance count = 0
+0f. need load generator
 
 1. Walk through console without actually launching, browse to the machine's public IP address
 
