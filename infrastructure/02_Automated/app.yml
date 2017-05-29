@@ -445,5 +445,6 @@ Resources:
       - !GetAtt 'elasticLoadBalancer.DNSName'
 
 Outputs:
-  Description: DNS name of the ELB
-  Value: !GetAtt 'elasticLoadBalancer.DNSName'
+  LoadBalancerDnsName:
+    Description: DNS name of the ELB
+    Value: !GetAtt 'elasticLoadBalancer.DNSName'
