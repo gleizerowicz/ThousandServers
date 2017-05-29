@@ -5,7 +5,7 @@ Parameters:
   InstanceCount:
     Description: Total number of instances to run in the autoscaling group. This number is used for both min and max size for demo purposes only.
     Type: String
-    Default: "0"
+    Default: 0
 
   AppGitRepo:
     Description: The git repo where the application and environment artifacts are stored
@@ -28,7 +28,7 @@ Parameters:
     Default: app
 
 Conditions: 
-  DeployDnsRecordSet: !Not [!Equals [ !Ref InstanceCount, "0" ]]
+  DeployDnsRecordSet: !Not [ !Equals [ !Ref InstanceCount, 0 ] ]
   
 Mappings:
   RegionMap:
@@ -446,5 +446,6 @@ Resources:
 
 Outputs:
   LoadBalancerDnsName:
+    Condition: DeployDnsRecordSet
     Description: DNS name of the ELB
     Value: !Join [ "://", [ "http", !GetAtt "elasticLoadBalancer.DNSName" ]]
