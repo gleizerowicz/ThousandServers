@@ -2,33 +2,38 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: app
 
 Parameters:
-  AppGitRepo:
-    Default: https://github.com/gleizerowicz/Infrax-as-Code-1000-webservers-in-40-minutes.git
+  InstanceCount:
+    Description: Total number of instances to run in the autoscaling group. This number is used for both min and max size for demo purposes only.
     Type: String
+    Default: 4
+
+  AppGitRepo:
     Description: The git repo where the application and environment artifacts are stored
+    Type: String
+    Default: https://github.com/gleizerowicz/Infrax-as-Code-1000-webservers-in-40-minutes.git
 
   InstanceProfileArn:
-    Type: String
     Description: Instance Profile ARN (created in bootstrap template)
+    Type: String
     Default: "arn:aws:iam::892774835300:instance-profile/ThousandServers-appInstanceProfile"
 
   HostedZoneName:
-    Default: leizerodemo.net.
-    Type: String
     Description: The hosted zone name for Route 53
+    Type: String
+    Default: leizerodemo.net.
 
   UseRoute53:
-    Default: true
-    Type: String
     Description: Used to decide whether to deploy a DNS Record Set, set to false if Route 53 is not set up
+    Type: String
+    Default: true
     AllowedValues:
     - true
     - false
 
   AppDnsName:
-    Default: app
-    Type: String
     Description: DNS name of the app server (will be prepended to the Hosted Zone Name during deployment)
+    Type: String
+    Default: app
 
 Conditions: 
   DeployDnsRecordSet: !Equals [ !Ref UseRoute53, true ]
@@ -337,8 +342,8 @@ Resources:
       - !Ref 'privateSubnet0'
       - !Ref 'privateSubnet1'
       LaunchConfigurationName: !Ref 'launchConfiguration'
-      MinSize: '4'
-      MaxSize: '4'
+      MinSize: !Ref InstanceCount
+      MaxSize: !Ref InstanceCount
       LoadBalancerNames:
       - !Ref 'elasticLoadBalancer'
       Tags:
