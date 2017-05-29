@@ -447,4 +447,4 @@ Resources:
 Outputs:
   LoadBalancerDnsName:
     Description: DNS name of the ELB
-    Value: !GetAtt 'elasticLoadBalancer.DNSName'
+    Value: !Join [ "://", [ "http", !GetAtt "elasticLoadBalancer.DNSName" ]]
