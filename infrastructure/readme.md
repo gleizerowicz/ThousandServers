@@ -16,7 +16,7 @@ Demo actions:
 
 2. Deploy to us-east-1 (set instance count to 4 in app.yml, set us-east-1 to true in regions.json, commit/push - 5 mins), browse to us-east-1 ELB
 
-3. Deploy to us-east-1 and us-east-2 (set instance count to 4, us-east-1 and us-east-2 to true, commit/push), browse to us-east-1 ELB and us-west-1 ELB
+3. Deploy to us-east-1 and us-east-2 (set instance count to 4, us-east-1 and us-east-2 to true, commit/push - 5 mins), browse to us-east-1 ELB and us-west-1 ELB
 
 4. Deploy to all regions (set instance count to 4, all regions to true, commit/push), browse to app.leizerodemo.net
 
