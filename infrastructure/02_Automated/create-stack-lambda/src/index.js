@@ -30,12 +30,12 @@ function cfnCallback(lambdaCallback, region, action, err, jobId)
         
         if (regionsCompleted.every((value, index, number) => { return value.success })) {
             codepipeline.putJobSuccessResult({ jobId: jobId }, (err, data) => {
-                console.log("CodePipeline.PutJobSuccessResult:\n\tdata: " + data + "\n\terr:" + err);
+                console.log("CodePipeline.PutJobSuccessResult:\n\tdata: " + JSON.stringify(data) + "\n\terr: " + err);
             });
         } else {
             var message = "Regions failed: " + regionsCompleted.filter((value) => { return value.region }).join(",");
             codepipeline.putJobFailureResult({ jobId: jobId, failureDetails: { message: message, type: "JobFailed" }}, (err, data) => {
-                console.log("CodePipeline.PutJobFailureResult:\n\tdata: " + data + "\n\terr:" + err);
+                console.log("CodePipeline.PutJobFailureResult:\n\tdata: " + JSON.stringify(data) + "\n\terr: " + err);
             });
         }
         
@@ -146,18 +146,12 @@ exports.handler = (event, context, callback) => {
             } else {
                 console.log("no regions to deploy");
                 codepipeline.putJobSuccessResult({ jobId: codePipelineJob.id }, (err, data) => {
-                    console.log("CodePipeline.PutJobSuccessResult:\n\tdata: " + data + "\n\terr:" + err);
+                    console.log("CodePipeline.PutJobSuccessResult:\n\tdata: " + JSON.stringify(data) + "\n\terr: " + err);
                 });
                 callback(null, "Complete");
             }
 
             asyncCallback();
-        },
-        (err, result) =>
-        {
-            if (err) {
-                console.log(err);
-            }
         }
     ]);
 
