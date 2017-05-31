@@ -14,17 +14,10 @@ param (
         "eu-west-1",
         "eu-west-2",
         "sa-east-1"
-    )
+    ),
+    [string]$stackName = "ThousandServersAuto"
+    # [string]$stackName = "ThousandServersPipeline"
 )
-
-# .\remove-buckets.ps1 -regions $regions
-
-foreach($region in $regions)
-{
-    aws cloudformation delete-stack `
-        --stack-name ThousandServersAuto `
-        --region $region
-}
 
 foreach($region in $regions)
 {
