@@ -2,7 +2,7 @@
     "regions": [
         { "name": "US East (Ohio)",              "region": "us-east-2",          "deploy": "false" },
         { "name": "US East (N. Virginia)",       "region": "us-east-1",          "deploy": "true" },
-        { "name": "US West (N. California)",     "region": "us-west-1",          "deploy": "false" },
+        { "name": "US West (N. California)",     "region": "us-west-1",          "deploy": "true" },
         { "name": "US West (Oregon)",            "region": "us-west-2",          "deploy": "false" },
         { "name": "Canada (Central)",            "region": "ca-central-1",       "deploy": "false" },
         { "name": "Asia Pacific (Mumbai)",       "region": "ap-south-1",         "deploy": "false" },
