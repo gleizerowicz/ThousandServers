@@ -15,13 +15,25 @@ Demo actions:
 
 1. Walk through console without actually launching, browse to the machine's public IP address
 
-2. Deploy to us-east-1 (set instance count to 4 in app.yml, set us-east-1 to true in regions.json, commit/push - 5 mins), browse to us-east-1 ELB
+2. Deploy to us-east-1
+2a. set instance count to 4 in app.yml
+2b. use console to update existing stack in us-east-1
+2c. browse to us-east-1 ELB (use the stack output)
 
-3. Deploy to us-east-1 and us-west-1 (set instance count to 4, us-east-1 and us-west-1 to true, commit/push - 5 mins), browse to us-east-1 ELB and us-west-1 ELB
+3. Deploy to us-east-1 and us-west-1
+3a. set us-east-1 to true in regions.json
+3b. commit/push - 5 mins
+3c. browse to us-east-1 ELB and us-west-1 ELB (use the stack outputs)
 
-4. Deploy to all regions (set instance count to 4, all regions to true, commit/push - 5 mins), browse to app.leizerodemo.net
+4. Deploy to all regions
+4a. set all regions to true
+4b. commit/push - 5 mins
+4c. browse to app.leizerodemo.net (turn on auto-refresh)
 
-5. Deploy 1400 instances (set instance count to 100, all regions to true, commit/push), browse to app.leizerodemo.net
+5. Deploy 1400 instances
+4a. set instance count to 100
+4b. commit/push
+4c. browse to app.leizerodemo.net with auto-refresh
 
 Teardown after demo:
 1. run 02_Automated/delete-stacks.ps1 or set intance count to zero, all regions to true, commit/push
