@@ -36,5 +36,5 @@ Demo actions:
 4c. browse to app.leizerodemo.net with auto-refresh
 
 Teardown after demo:
-1. run 02_Automated/delete-stacks.ps1 or set intance count to zero, all regions to true, commit/push
-2. decrease provisioned capacity of ddb table to 1/1
+1. run 02_Automated/delete-stacks.ps1
+2. decrease provisioned capacity of ddb table to 1/1 (need to script this too at some point)

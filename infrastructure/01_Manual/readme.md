@@ -1,1 +1,1 @@
-single instance, single AZ, user data bootstrap
+couple of text files with userdata scripts for manual deployment

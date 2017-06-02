@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: sam template for load generator lambda
+
+Parameters:
+  AppDomainName:
+    Type: String
+    Description: Domain name of application
+    Default: app.leizerodemo.net
+
+  DnsNameServer:
+    Type: String
+    Description: IP Address of name server from Route 53 for DNS queries
+    Default: 205.251.198.7 #ns-1543.awsdns-00.co.uk for app.leizerodemo.net
+
+  AutomationRole:
+    Type: String
+    Description: "ARN of the role to be used by the CodePipeline service - Get the ARN from the bootstrap stack outputs"
+    Default: "arn:aws:iam::892774835300:role/ThousandServersBootstrap-AutomationRole-1HQFBRP4LDTPX"
+
+Resources:
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dnsRR.lambda_handler
+      Runtime: python3.6
+      CodeUri: ./src
+      Role: !Ref AutomationRole
+      MemorySize: 128
+      Timeout: 25
+      Environment:
+        Variables:
+          AppDomainName: !Ref AppDomainName
+          DnsNameServer: !Ref DnsNameServer
