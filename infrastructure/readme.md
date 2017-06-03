@@ -7,34 +7,34 @@
 
 ## Demo actions:
 1. Setup account and resources (see [bootstrap](00_Bootstrap/readme.md))
-  1. do console pre-requisites
-  1. deploy bootstrap template
-  1. reset ddb table, increase provisioned capacity to 15 read/25 write
-  1. Deploy a machine manually to a public subnet using the userdata in 01_Manual/userdata_app.txt  - make sure it uses the ThousandServers-appInstanceProfile and goes in the World security group
-  1. Deploy to all regions with instance count = 0
-  1. need load generator
+   * do console pre-requisites
+   * deploy bootstrap template
+   * reset ddb table, increase provisioned capacity to 15 read/25 write
+   * Deploy a machine manually to a public subnet using the userdata in 01_Manual/userdata_app.txt  - make sure it uses the ThousandServers-appInstanceProfile and goes in the World security group
+   * Deploy to all regions with instance count = 0
+   * need load generator
 
 1. Walk through console without actually launching, browse to the machine's public IP address
 
 1. Deploy to us-east-1
-  1. set instance count to 4 in app.yml
-  1. use console to update existing stack in us-east-1
-  1. browse to us-east-1 ELB (use the stack output)
+   * set instance count to 4 in app.yml
+   * use console to update existing stack in us-east-1
+   * browse to us-east-1 ELB (use the stack output)
 
 1. Deploy to us-east-1 and us-west-1
-  1. set us-east-1 to true in regions.json
-  1. commit/push - 5 mins
-  1. browse to us-east-1 ELB and us-west-1 ELB (use the stack outputs)
+   * set us-east-1 to true in regions.json
+   * commit/push - 5 mins
+   * browse to us-east-1 ELB and us-west-1 ELB (use the stack outputs)
 
 1. Deploy to all regions
-  1. set all regions to true
-  1. commit/push - 5 mins
-  1. browse to app.leizerodemo.net (turn on auto-refresh)
+   * set all regions to true
+   * commit/push - 5 mins
+   * browse to app.leizerodemo.net (turn on auto-refresh)
 
 1. Deploy 1400 instances
-  1. set instance count to 100
-  1. commit/push
-  1. browse to app.leizerodemo.net with auto-refresh
+   * set instance count to 100
+   * commit/push
+   * browse to app.leizerodemo.net with auto-refresh
 
 ## Teardown after demo:
 1. run 02_Automated/delete-stacks.ps1
