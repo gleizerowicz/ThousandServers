@@ -6,7 +6,7 @@
 1. Scale up to 100 servers x 14 regions
 
 ## Demo actions:
-1. Setup account and resources (see 00_Bootstrap/readme.md)
+1. Setup account and resources (see [bootstrap](00_Bootstrap/readme.md))
   1. do console pre-requisites
   1. deploy bootstrap template
   1. reset ddb table, increase provisioned capacity to 15 read/25 write
