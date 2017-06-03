@@ -32,7 +32,7 @@
    * browse to http://app.leizerodemo.net (turn on auto-refresh)
 
 1. Deploy 1400 instances
-   * set instance count to 100
+   * set instance count to 100 in [app.yml](02_Automated/app.yml)
    * commit/push
    * browse to http://app.leizerodemo.net with auto-refresh
 
