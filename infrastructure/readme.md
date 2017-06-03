@@ -1,11 +1,16 @@
 ## Demo Flow
-1. Deploy a single machine manually with a userdata script to run application (dynamodb table and other pre-reqs must exist)
-1. Automate complex/secure network using a template and a pipeline in us-east-1
+1. Manually deploy a single machine with a userdata script to run application (dynamodb table and other pre-reqs must exist)
+   * Tedious and boring, no security, no scale, no redundancy, no automation
+1. Manually deploy a complex/secure network to us-east-1 using a CloudFormation template
+   * No regional redundancy, west coast latency, only part of the automation story
 1. Deploy to multiple regions (us-east-1 and us-west-1)
+   * 2 different endpoints for users, not yet global
 1. Add route 53 and round robin
+   * woohoo!
 1. Scale up to 100 servers x 14 regions
+   * we are cool
 
-## Demo actions:
+## Demo actions
 1. Setup account and resources (see [bootstrap](00_Bootstrap/readme.md))
    * Do console pre-requisites
    * Deploy [bootstrap template](00_Bootstrap/bootstrap.yml)
@@ -42,6 +47,6 @@
    * Commit/push
    * Browse to http://app.leizerodemo.net with auto-refresh
 
-## Teardown after demo:
+## Teardown after demo
 1. [Delete stacks](02_Automated/delete-stacks.ps1)
 1. Decrease provisioned capacity of ddb table to 1/1 (need to script this too at some point)
