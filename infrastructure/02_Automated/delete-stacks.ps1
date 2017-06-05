@@ -22,6 +22,7 @@ param (
 
 foreach($region in $regions)
 {
+    Write-Host "deleting $stackName in $region"
     aws cloudformation delete-stack `
         --stack-name $stackName `
         --region $region
