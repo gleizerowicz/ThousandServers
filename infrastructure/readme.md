@@ -21,6 +21,9 @@
      * Set all regions to true in [regions](02_Automated/regions.json)
      * Set instance count = 0 in [app.yml](02_Automated/app.yml)
      * Commit/push
+   * Disable deployment for the start of the demo
+     * Set all regions back to false in [regions](02_Automated/regions.json)
+     * Commit/push
    * **Need load generator**
 
 1. Walk through EC2 launch console without actually launching, browse to the machine's public IP address **2 mins**
