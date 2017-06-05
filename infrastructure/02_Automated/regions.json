@@ -1,18 +1,18 @@
 {
     "regions": [
-        { "name": "US East (Ohio)",              "region": "us-east-2",          "deploy": "false" },
-        { "name": "US East (N. Virginia)",       "region": "us-east-1",          "deploy": "false" },
-        { "name": "US West (N. California)",     "region": "us-west-1",          "deploy": "false" },
-        { "name": "US West (Oregon)",            "region": "us-west-2",          "deploy": "false" },
-        { "name": "Canada (Central)",            "region": "ca-central-1",       "deploy": "false" },
-        { "name": "Asia Pacific (Mumbai)",       "region": "ap-south-1",         "deploy": "false" },
-        { "name": "Asia Pacific (Seoul)",        "region": "ap-northeast-2",     "deploy": "false" },
-        { "name": "Asia Pacific (Singapore)",    "region": "ap-southeast-1",     "deploy": "false" },
-        { "name": "Asia Pacific (Sydney)",       "region": "ap-southeast-2",     "deploy": "false" },
-        { "name": "Asia Pacific (Tokyo)",        "region": "ap-northeast-1",     "deploy": "false" },
-        { "name": "EU (Frankfurt)",              "region": "eu-central-1",       "deploy": "false" },
-        { "name": "EU (Ireland)",                "region": "eu-west-1",          "deploy": "false" },
-        { "name": "EU (London)",                 "region": "eu-west-2",          "deploy": "false" },
-        { "name": "South America (São Paulo)",   "region": "sa-east-1",          "deploy": "false" }
+        { "name": "US East (Ohio)",              "region": "us-east-2",          "deploy": "true" },
+        { "name": "US East (N. Virginia)",       "region": "us-east-1",          "deploy": "true" },
+        { "name": "US West (N. California)",     "region": "us-west-1",          "deploy": "true" },
+        { "name": "US West (Oregon)",            "region": "us-west-2",          "deploy": "true" },
+        { "name": "Canada (Central)",            "region": "ca-central-1",       "deploy": "true" },
+        { "name": "Asia Pacific (Mumbai)",       "region": "ap-south-1",         "deploy": "true" },
+        { "name": "Asia Pacific (Seoul)",        "region": "ap-northeast-2",     "deploy": "true" },
+        { "name": "Asia Pacific (Singapore)",    "region": "ap-southeast-1",     "deploy": "true" },
+        { "name": "Asia Pacific (Sydney)",       "region": "ap-southeast-2",     "deploy": "true" },
+        { "name": "Asia Pacific (Tokyo)",        "region": "ap-northeast-1",     "deploy": "true" },
+        { "name": "EU (Frankfurt)",              "region": "eu-central-1",       "deploy": "true" },
+        { "name": "EU (Ireland)",                "region": "eu-west-1",          "deploy": "true" },
+        { "name": "EU (London)",                 "region": "eu-west-2",          "deploy": "true" },
+        { "name": "South America (São Paulo)",   "region": "sa-east-1",          "deploy": "true" }
     ]
 }
