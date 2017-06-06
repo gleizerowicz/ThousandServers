@@ -32,7 +32,7 @@
 
 1. Manually deploy [app CF template](02_Automated/app.yml) to us-east-1 **5 mins**
    * Use [AWS console](https://console.aws.amazon.com/console/home?region=us-east-1) to update existing stack in us-east-1
-   * Update ThousandServersAuto stack with app.yml, change InstanceCount parameter to 4 on the console page
+   * Update ThousandServersAuto stack with [app.yml](02_Automated/app.yml), change InstanceCount parameter to 4 on the console page
    * Show cloudformation changeset before updating the stack
    * Browse to us-east-1 ELB (use the stack output)
 
