@@ -30,14 +30,13 @@
 1. Walk through EC2 launch console without actually launching, browse to the machine's public IP address **2 mins**
 
 1. Manually deploy [app CF template](02_Automated/app.yml) to us-east-1 **5 mins**
-   * Set instance count to 4 in [app.yml](02_Automated/app.yml)
-   * **Do not commit/push**
    * Use [AWS console](https://console.aws.amazon.com/console/home?region=us-east-1) to update existing stack in us-east-1
    * Update ThousandServersAuto stack with app.yml, change InstanceCount parameter to 4 on the console page
    * Show cloudformation changeset before updating the stack
    * Browse to us-east-1 ELB (use the stack output)
 
 1. Automatically deploy 4 instances to us-east-1 and us-west-1 via CodePipeline **5 mins**
+   * Set instance count to 4 in [app.yml](02_Automated/app.yml)
    * Set us-east-1 and us-west-1 to true in [regions.json](02_Automated/regions.json)
    * Commit/push (can show codepipeline, cloudwatch logs, cloudformation here)
    * Browse to us-east-1 ELB and us-west-1 ELB (use the stack outputs)
