@@ -7,6 +7,11 @@ Parameters:
     Description: "ARN of the role to be used by the CodePipeline service - Get the ARN from the bootstrap stack outputs"
     Default: "arn:aws:iam::892774835300:role/ThousandServersBootstrap-AutomationRole-1HQFBRP4LDTPX"
 
+  DeployTemplateLambdaFunction:
+    Type: String
+    Description: Lambda function name that creates stacks in multiple regions
+    Default: deploy-template-lambda-LambdaFunction-1NN0S5WFHZ2AL
+
 Resources:
   ArtifactBucket:
     Type: AWS::S3::Bucket
@@ -47,7 +52,7 @@ Resources:
                 Version: 1
                 Provider: Lambda
               Configuration:
-                FunctionName: deploy-template-lambda-LambdaFunction-1NN0S5WFHZ2AL
+                FunctionName: !Ref DeployTemplateLambdaFunction
                 UserParameters: "{ \"StackName\": \"ThousandServersAuto\", \"TemplateFile\": \"infrastructure/02_Automated/app.yml\", \"RegionsFile\": \"infrastructure/02_Automated/regions.json\" }"
               InputArtifacts:
                 - Name: SourceOutput
