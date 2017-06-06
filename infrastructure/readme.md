@@ -10,7 +10,7 @@
 1. Scale up to 100 servers x 14 regions
    * we are cool
 
-## Demo actions
+## Demo prep
 1. Setup account and resources (see [bootstrap](00_Bootstrap/readme.md))
    * Do console pre-requisites
    * Deploy [bootstrap template](00_Bootstrap/bootstrap.yml)
@@ -26,6 +26,7 @@
      * Commit/push
    * **Need load generator**
 
+## Demo actions
 1. Walk through EC2 launch console without actually launching, browse to the machine's public IP address **2 mins**
 
 1. Manually deploy [app CF template](02_Automated/app.yml) to us-east-1 **5 mins**
