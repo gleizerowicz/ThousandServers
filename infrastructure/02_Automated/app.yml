@@ -297,6 +297,11 @@ Resources:
       Tags:
       - Key: Name
         Value: appNat
+      SecurityGroupIngress:
+      - IpProtocol: 'tcp'
+        FromPort: '-1'
+        ToPort: '-1'
+        SourceSecurityGroupId: !Ref appSecurityGroup
       SecurityGroupEgress:
       - IpProtocol: '-1'
         FromPort: '-1'
