@@ -279,9 +279,9 @@ Resources:
       - Key: Name
         Value: appElb
       SecurityGroupIngress:
-      - IpProtocol: '-1'
-        FromPort: '-1'
-        ToPort: '-1'
+      - IpProtocol: '80'
+        FromPort: '80'
+        ToPort: '80'
         CidrIp: 0.0.0.0/0
       SecurityGroupEgress:
       - IpProtocol: '-1'
@@ -297,11 +297,6 @@ Resources:
       Tags:
       - Key: Name
         Value: appNat
-      SecurityGroupIngress:
-      - IpProtocol: '-1'
-        FromPort: '-1'
-        ToPort: '-1'
-        CidrIp: 0.0.0.0/0
       SecurityGroupEgress:
       - IpProtocol: '-1'
         FromPort: '-1'
@@ -317,10 +312,14 @@ Resources:
       - Key: Name
         Value: app
       SecurityGroupIngress:
-      - IpProtocol: '-1'
-        FromPort: '-1'
-        ToPort: '-1'
-        CidrIp: 0.0.0.0/0
+      - IpProtocol: 'tcp'
+        FromPort: '80'
+        ToPort: '80'
+        SourceSecurityGroupId: !Ref elbSecurityGroup
+      - IpProtocol: 'tcp'
+        FromPort: '22'
+        ToPort: '22'
+        SourceSecurityGroupId: !Ref elbSecurityGroup
       SecurityGroupEgress:
       - IpProtocol: '-1'
         FromPort: '-1'
