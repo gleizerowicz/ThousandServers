@@ -1,0 +1,9 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\infrastructure",
+    "\\infrastructure\\00_Bootstrap"
+  ],
+  "SelectedNode": "\\infrastructure\\00_Bootstrap\\deploy-pipeline.ps1",
+  "PreviewInSolutionExplorer": false
+}

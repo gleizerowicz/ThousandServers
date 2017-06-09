@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: environment prerequisites for app - deploy once in us-east-1
+Description: environment prerequisites for app - deploy once in local region (originally us-east-1) 
 
 Resources:
   AutomationRole:
@@ -188,13 +188,13 @@ Resources:
         - Action: 
           - s3:GetObject
           Effect: Allow
-          Resource: !Sub "arn:aws:s3:::${S3Bucket}/*"
+          Resource: !Sub arn:aws:s3:::${S3Bucket}/*
           Principal: '*'
 
   appRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: ThousandServers-appRole
+      RoleName: ThousandAndOneServers-appRole
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -211,7 +211,7 @@ Resources:
   appInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
-      InstanceProfileName: ThousandServers-appInstanceProfile
+      InstanceProfileName: ThousandAndOneServers-appInstanceProfile
       Path: /
       Roles:
       - !Ref 'appRole'
