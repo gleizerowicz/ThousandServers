@@ -6,6 +6,7 @@
 1. Deploy bootstrap.yml template: IAM resources, S3 bucket/policy, DynamoDB Table
 	Edit create-stack-bootstrap.sh and update path to bootstrap.yml
 	Run the create-stack-bootstrap.sh to deploy bootstrap.sh
-1. run reset-dynamodb-item.ps1 to zero all of the counts
+1. run reset-dynamodb-item.sh to zero all of the counts
 1. Create Route 53 Hosted Zone manually (if you register a domain with Route 53 the hosted zone will be created automatically)
-1. Deploy all regions with InstanceCount = 0 (set all regions to true in regions.json, set instance count to 0 in app.yml, commit/push)
+1. Deploy all regions with InstanceCount = 0 
+	(set all regions to true in regions.json, set instance count to 0 in app.yml, commit/push)

@@ -194,7 +194,7 @@ Resources:
   appRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: ThousandAndOneServers-appRole
+      RoleName: ThousandServers-appRole
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -211,7 +211,7 @@ Resources:
   appInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
-      InstanceProfileName: ThousandAndOneServers-appInstanceProfile
+      InstanceProfileName: ThousandServers-appInstanceProfile
       Path: /
       Roles:
       - !Ref 'appRole'
