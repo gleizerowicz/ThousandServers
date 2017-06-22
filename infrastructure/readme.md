@@ -14,10 +14,11 @@
 1. Setup account and resources (see [bootstrap](00_Bootstrap/readme.md))
    * Do console pre-requisites
    * Deploy [bootstrap template](00_Bootstrap/bootstrap.yml)
+   * Update the AutomationRole default parameter value in the [create-stack template](02_Automated/create-stack-lambda/create-stack.yml) to the 
    * [Package](02_Automated/create-stack-lambda/package-template.ps1) and [deploy](02_Automated/create-stack-lambda/deploy-template.ps1) the "create-stack" lambda function
    * [Deploy](00_Bootstrap/deploy-pipeline.ps1) the [CodePipeline template](00_Bootstrap/pipeline.yml)
    * [reset ddb table](00_Bootstrap/reset-dynamodb-item.ps1), increase provisioned capacity to 15 read/25 write
-   * Deploy a machine manually to a public subnet using the [userdata](01_Manual/userdata_app.txt)  - make sure it uses the ThousandServers-appInstanceProfile and goes in the World security group
+   * Deploy a *Ubuntu Server 16.04 LTS (HVM), SSD Volume Type - ami-d15a75c7* machine manually to a public subnet using the [userdata](01_Manual/userdata_app.txt)  - make sure it uses the ThousandServers-appInstanceProfile and goes in the World security group
    * Deploy stacks with no app servers:
      * Set all regions to true in [regions](02_Automated/regions.json)
      * Set instance count = 0 in [app.yml](02_Automated/app.yml)
