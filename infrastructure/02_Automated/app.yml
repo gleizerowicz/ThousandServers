@@ -5,7 +5,7 @@ Parameters:
   InstanceCount:
     Description: Total number of instances to run in the autoscaling group. This number is used for both min and max size for demo purposes only.
     Type: String
-    Default: 2
+    Default: 1
 
   AppGitRepo:
     Description: The git repo where the application and environment artifacts are stored
